@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+</head>
+
+<body>
+    <h2>Monaco Diff Editor Sample</h2>
+    <div>
+        <button id="btn">导入代码文本</button>
+        <button id="save" disabled>保存</button>
+    </div>
+    <div id="container" style="width: 800px; height: 600px; border: 1px solid grey"></div>
+
+    <script src="../node_modules/monaco-editor/min/vs/loader.js"></script>
+    <script>
+        require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
+        require(['vs/editor/editor.main'], function () {
+            let monacoEditor = monaco.editor.create(document.getElementById('container'), {
+                value: '//点击按钮导入代码文本\n//目前仅支持javascript',
+                language: 'javascript'
+            });
+
+            let originModel = monacoEditor.getModel()
+
+            let btn = document.getElementById('btn')
+            let saveBtn = document.getElementById('save')
+            btn.onclick = async () => {
+                [fileHandle] = await window.showOpenFilePicker();
+                let file = await fileHandle.getFile();
+                console.log(file)
+                let arrayBuffer = await file.arrayBuffer()
+                let blob = new Blob([arrayBuffer], { type: 'text/plain' })
+                var fr = new FileReader()
+                fr.readAsText(blob, 'utf8')
+                fr.onload = () => {
+                    originModel.setValue(fr.result)
+
+                    saveBtn.removeAttribute('disabled')
+                    saveBtn.onclick = async () => {
+                        const savePicker = await window.showSaveFilePicker()
+                        const cw = await savePicker.createWritable()
+                        await cw.write(originModel.getValue())
+                        await cw.close()
+                    }
+                }
+            }
+
+        })
+    </script>
+    <script>
+
+    </script>
+</body>
+
+</html>
