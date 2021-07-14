@@ -13,6 +13,7 @@ Then visit [http://localhost:5500/browser-editor.html](http://localhost:5500/bro
 ## Related Knowledge
 
 - monaco-editor
+- FileReader
 - window.showOpenFilePicker
 - window.showSaveFilePicker
 
